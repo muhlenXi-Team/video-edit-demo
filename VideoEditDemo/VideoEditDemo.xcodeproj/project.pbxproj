@@ -15,6 +15,8 @@
 		C81E9DA9233105F10037B4CC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C81E9DA8233105F10037B4CC /* main.m */; };
 		C81E9DB1233106360037B4CC /* MXVideoUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C81E9DB0233106360037B4CC /* MXVideoUtil.m */; };
 		C81E9DB4233110F10037B4CC /* VideoEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C81E9DB3233110F10037B4CC /* VideoEditViewController.m */; };
+		C8476F212331CADA00ABC463 /* FrameEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C8476F202331CADA00ABC463 /* FrameEditCell.m */; };
+		C8476F252331FDCC00ABC463 /* FrameHanderView.m in Sources */ = {isa = PBXBuildFile; fileRef = C8476F242331FDCC00ABC463 /* FrameHanderView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,10 @@
 		C81E9DB0233106360037B4CC /* MXVideoUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MXVideoUtil.m; sourceTree = "<group>"; };
 		C81E9DB2233110F10037B4CC /* VideoEditViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoEditViewController.h; sourceTree = "<group>"; };
 		C81E9DB3233110F10037B4CC /* VideoEditViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoEditViewController.m; sourceTree = "<group>"; };
+		C8476F1F2331CADA00ABC463 /* FrameEditCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameEditCell.h; sourceTree = "<group>"; };
+		C8476F202331CADA00ABC463 /* FrameEditCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameEditCell.m; sourceTree = "<group>"; };
+		C8476F232331FDCC00ABC463 /* FrameHanderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameHanderView.h; sourceTree = "<group>"; };
+		C8476F242331FDCC00ABC463 /* FrameHanderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameHanderView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,21 +70,33 @@
 		C81E9D98233105F00037B4CC /* VideoEditDemo */ = {
 			isa = PBXGroup;
 			children = (
+				C8476F222331FD7000ABC463 /* VideoCrop */,
 				C81E9D99233105F00037B4CC /* AppDelegate.h */,
 				C81E9D9A233105F00037B4CC /* AppDelegate.m */,
 				C81E9D9C233105F00037B4CC /* ViewController.h */,
 				C81E9D9D233105F00037B4CC /* ViewController.m */,
-				C81E9DB2233110F10037B4CC /* VideoEditViewController.h */,
-				C81E9DB3233110F10037B4CC /* VideoEditViewController.m */,
 				C81E9D9F233105F00037B4CC /* Main.storyboard */,
 				C81E9DA2233105F10037B4CC /* Assets.xcassets */,
 				C81E9DA4233105F10037B4CC /* LaunchScreen.storyboard */,
 				C81E9DA7233105F10037B4CC /* Info.plist */,
 				C81E9DA8233105F10037B4CC /* main.m */,
-				C81E9DAF233106360037B4CC /* MXVideoUtil.h */,
-				C81E9DB0233106360037B4CC /* MXVideoUtil.m */,
 			);
 			path = VideoEditDemo;
+			sourceTree = "<group>";
+		};
+		C8476F222331FD7000ABC463 /* VideoCrop */ = {
+			isa = PBXGroup;
+			children = (
+				C81E9DB2233110F10037B4CC /* VideoEditViewController.h */,
+				C81E9DB3233110F10037B4CC /* VideoEditViewController.m */,
+				C8476F1F2331CADA00ABC463 /* FrameEditCell.h */,
+				C8476F202331CADA00ABC463 /* FrameEditCell.m */,
+				C81E9DAF233106360037B4CC /* MXVideoUtil.h */,
+				C81E9DB0233106360037B4CC /* MXVideoUtil.m */,
+				C8476F232331FDCC00ABC463 /* FrameHanderView.h */,
+				C8476F242331FDCC00ABC463 /* FrameHanderView.m */,
+			);
+			path = VideoCrop;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,8 +172,10 @@
 				C81E9D9E233105F00037B4CC /* ViewController.m in Sources */,
 				C81E9DB4233110F10037B4CC /* VideoEditViewController.m in Sources */,
 				C81E9DA9233105F10037B4CC /* main.m in Sources */,
+				C8476F212331CADA00ABC463 /* FrameEditCell.m in Sources */,
 				C81E9DB1233106360037B4CC /* MXVideoUtil.m in Sources */,
 				C81E9D9B233105F00037B4CC /* AppDelegate.m in Sources */,
+				C8476F252331FDCC00ABC463 /* FrameHanderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
