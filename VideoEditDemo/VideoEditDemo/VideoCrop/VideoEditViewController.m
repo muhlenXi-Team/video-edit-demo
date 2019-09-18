@@ -22,7 +22,6 @@
 @property (nonatomic,strong) AVPlayerLayer * playerLayer;
 
 @property (nonatomic,assign) BOOL  isPlaying;
-@property (nonatomic,strong) UIButton * playButton;
 
 @property (nonatomic, strong) UIView * editView;
 @property (nonatomic,strong) UICollectionView *frameCollectionView;
@@ -32,9 +31,11 @@
 @property (nonatomic,strong) FrameHanderView *rightHander;
 @property (nonatomic, strong) UIView *progressLineView;
 
-
 @property (nonatomic,assign) CGFloat editMinWidth;
 @property (nonatomic,assign) CGFloat editMaxWidth;
+
+@property (nonatomic,assign) float videoTotalTime;
+@property (nonatomic, assign) float timescale;
 
 @end
 
@@ -45,13 +46,8 @@
     
     self.view.backgroundColor = [UIColor blackColor];
     self.navigationItem.title = @"视频裁剪";
-    
-    // 最长20s最短5秒
-    self.editMinWidth = kScreenWidth * 0.05;
-    self.editMaxWidth = kScreenWidth * 0.2;
 
     [self setupPlayer];
-    [self setupPlayButton];
     [self setupEditView];
     [self fetchVideoFrames];
 }
@@ -75,20 +71,50 @@
     self.player = [[AVPlayer alloc] initWithPlayerItem:playItem];
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
     self.playerLayer.frame = self.view.bounds;
-    
     [self.view.layer addSublayer:self.playerLayer];
-}
-
-- (void)setupPlayButton {
-    UIButton *play = [[UIButton alloc] init];
-    play.frame = CGRectMake(0, 0, 80, 30);
-    play.center = self.view.center;
     
-    [play setTitle:@"play" forState:UIControlStateNormal];
-    [play setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [play addTarget:self action:@selector(playButtonAction) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:play];
-    self.playButton = play;
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.videoUrl options:nil];
+    self.videoTotalTime = asset.duration.value/asset.duration.timescale;
+    self.timescale = asset.duration.timescale;
+    
+    // 最长20s最短5秒
+    CGFloat totalWidth = kScreenWidth-kEditBlueViewWidth*2;
+    self.editMinWidth = totalWidth * 5/self.videoTotalTime;
+    if (self.videoTotalTime > 15) {
+        self.editMaxWidth = totalWidth * 15/self.videoTotalTime;
+    } else {
+        self.editMaxWidth = totalWidth;
+    }
+    
+    CMTime time = CMTimeMake(1.0, asset.duration.timescale);
+    __weak typeof(self)  weakSelf = self;
+    [self.player addPeriodicTimeObserverForInterval:time queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+        
+        // 调整进度条
+        CGFloat nowSeconds = CMTimeGetSeconds(weakSelf.player.currentTime);
+        CGFloat percent = nowSeconds / weakSelf.videoTotalTime;
+        CGFloat totalWidth = kScreenWidth-kEditBlueViewWidth*2-4;
+        
+         __block CGRect progressFrame = CGRectMake(totalWidth*percent+kEditBlueViewWidth, 4, 4, weakSelf.leftHander.frame.size.height);
+        if (weakSelf.isPlaying) {
+            weakSelf.progressLineView.frame = progressFrame;
+        }
+        
+        // 到结束时间重新开始
+        CGFloat endSeconds = (weakSelf.rightHander.frame.origin.x-kEditBlueViewWidth)/totalWidth*weakSelf.videoTotalTime;
+        CGFloat beginSeconds = (weakSelf.leftHander.frame.size.width-kEditBlueViewWidth)/totalWidth*weakSelf.videoTotalTime;
+        if (nowSeconds > endSeconds) {
+            CMTime time = CMTimeMakeWithSeconds(beginSeconds, weakSelf.timescale);
+            progressFrame = CGRectMake(kEditBlueViewWidth, 4, 4, weakSelf.leftHander.frame.size.height);
+            weakSelf.progressLineView.frame = progressFrame;
+            [weakSelf.player seekToTime:time completionHandler:^(BOOL finished) {
+                [weakSelf.player play];
+            }];
+        }
+        
+        //NSLog(@"%f",CMTimeGetSeconds(weakSelf.player.currentTime));
+    }];
+    [self play];
 }
 
 - (void) setupEditView {
@@ -184,23 +210,30 @@
     
 }
 
-#pragma mark - event
-
-- (void)playButtonAction {
-    if (self.isPlaying == FALSE) {
-        [self.player play];
-        [self.playButton setTitle:@"pasuse" forState:UIControlStateNormal];
-        self.isPlaying = YES;
-    } else {
-        [self.player pause];
-        [self.playButton setTitle:@"play" forState:UIControlStateNormal];
-        self.isPlaying = NO;
-    }
+// 调整播放进度
+- (void) seekToPlayer {
+    float seconds = self.videoTotalTime*(self.leftHander.frame.size.width/self.editView.frame.size.width);
+    CMTime time = CMTimeMakeWithSeconds(seconds, self.timescale);
+    [self.player seekToTime:time];
 }
+
+- (void)play {
+    [self.player play];
+    self.isPlaying = YES;
+}
+
+- (void)pause {
+    [self.player pause];
+    self.isPlaying = NO;
+}
+
+#pragma mark - event
 
 - (void) leftPanGestureHandler:(UIPanGestureRecognizer *)pan {
     switch (pan.state) {
         case UIGestureRecognizerStateChanged: {
+            [self pause];
+            
             CGPoint translation = [pan translationInView:self.editView];
             
             CGFloat maxWidth = kScreenWidth-kEditBlueViewWidth-self.editMinWidth;
@@ -231,9 +264,13 @@
             }
             
             [pan setTranslation:CGPointZero inView:self.editView];
+            
+            [self seekToPlayer];
         }
             break;
-            
+        case UIGestureRecognizerStateEnded:
+           [self play];
+            break;
         default:
             break;
     }
@@ -242,6 +279,8 @@
 - (void) rightPanGestureHandler:(UIPanGestureRecognizer *)pan {
     switch (pan.state) {
         case UIGestureRecognizerStateChanged: {
+            [self pause];
+            
             CGPoint translation = [pan translationInView:self.editView];
             
             // 设置右边蓝色把手x坐标
@@ -273,9 +312,13 @@
             self.progressLineView.frame = progressFrame;
             
             [pan setTranslation:CGPointZero inView:self.editView];
+            
+            [self seekToPlayer];
         }
             break;
-            
+        case UIGestureRecognizerStateEnded:
+            [self play];
+            break;
         default:
             break;
     }

@@ -43,7 +43,7 @@
 }
 
 - (void) setupSubViews {
-    self.backgroundColor = [[UIColor yellowColor] colorWithAlphaComponent:0.5];
+    self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5];
     self.blueView = [[UIView alloc] init];
     self.blueView.backgroundColor = [UIColor colorWithRed:39/255.0 green:97/255.0 blue:181/255.0 alpha:1.0];
     if (self.isLeft) {
