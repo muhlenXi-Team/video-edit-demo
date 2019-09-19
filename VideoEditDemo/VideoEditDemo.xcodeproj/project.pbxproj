@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F45987E78FB8F799E86EA8E /* libPods-VideoEditDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1487FD6E5280E8916DCF592E /* libPods-VideoEditDemo.a */; };
 		C81E9D9B233105F00037B4CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C81E9D9A233105F00037B4CC /* AppDelegate.m */; };
 		C81E9D9E233105F00037B4CC /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C81E9D9D233105F00037B4CC /* ViewController.m */; };
 		C81E9DA1233105F00037B4CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C81E9D9F233105F00037B4CC /* Main.storyboard */; };
@@ -20,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1487FD6E5280E8916DCF592E /* libPods-VideoEditDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VideoEditDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		65885982916552730C93E121 /* Pods-VideoEditDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoEditDemo.release.xcconfig"; path = "Target Support Files/Pods-VideoEditDemo/Pods-VideoEditDemo.release.xcconfig"; sourceTree = "<group>"; };
 		C81E9D96233105F00037B4CC /* VideoEditDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoEditDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C81E9D99233105F00037B4CC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		C81E9D9A233105F00037B4CC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -38,6 +41,7 @@
 		C8476F202331CADA00ABC463 /* FrameEditCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameEditCell.m; sourceTree = "<group>"; };
 		C8476F232331FDCC00ABC463 /* FrameHanderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameHanderView.h; sourceTree = "<group>"; };
 		C8476F242331FDCC00ABC463 /* FrameHanderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameHanderView.m; sourceTree = "<group>"; };
+		E82F348AADEFA8894321EEF0 /* Pods-VideoEditDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoEditDemo.debug.xcconfig"; path = "Target Support Files/Pods-VideoEditDemo/Pods-VideoEditDemo.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,17 +49,38 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F45987E78FB8F799E86EA8E /* libPods-VideoEditDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		408626EDC2E66AD8F55B191B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1487FD6E5280E8916DCF592E /* libPods-VideoEditDemo.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6AB7523881D1F7CA4A6544CC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E82F348AADEFA8894321EEF0 /* Pods-VideoEditDemo.debug.xcconfig */,
+				65885982916552730C93E121 /* Pods-VideoEditDemo.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		C81E9D8D233105F00037B4CC = {
 			isa = PBXGroup;
 			children = (
 				C81E9D98233105F00037B4CC /* VideoEditDemo */,
 				C81E9D97233105F00037B4CC /* Products */,
+				6AB7523881D1F7CA4A6544CC /* Pods */,
+				408626EDC2E66AD8F55B191B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -106,6 +131,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C81E9DAC233105F10037B4CC /* Build configuration list for PBXNativeTarget "VideoEditDemo" */;
 			buildPhases = (
+				A75D002C432E4BB1FAD4BF20 /* [CP] Check Pods Manifest.lock */,
 				C81E9D92233105F00037B4CC /* Sources */,
 				C81E9D93233105F00037B4CC /* Frameworks */,
 				C81E9D94233105F00037B4CC /* Resources */,
@@ -163,6 +189,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A75D002C432E4BB1FAD4BF20 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-VideoEditDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C81E9D92233105F00037B4CC /* Sources */ = {
@@ -315,6 +366,7 @@
 		};
 		C81E9DAD233105F10037B4CC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E82F348AADEFA8894321EEF0 /* Pods-VideoEditDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Manual;
@@ -334,6 +386,7 @@
 		};
 		C81E9DAE233105F10037B4CC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 65885982916552730C93E121 /* Pods-VideoEditDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Manual;

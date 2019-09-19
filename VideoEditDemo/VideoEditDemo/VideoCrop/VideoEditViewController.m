@@ -10,11 +10,15 @@
 #import "FrameEditCell.h"
 #import "FrameHanderView.h"
 #import <AVKit/AVKit.h>
-
-
+#import "MXVideoUtil.h"
+#import <MBProgressHUD/MBProgressHUD.h>
 
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
 #define kEditBlueViewWidth 16.0
+// 最短裁剪视频长度
+#define KCropMinSeconds 2.0
+// 最长视频裁剪长度
+#define kCropMaxSeconds 10
 
 @interface VideoEditViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
@@ -43,10 +47,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.view.backgroundColor = [UIColor blackColor];
-    self.navigationItem.title = @"视频裁剪";
-
+    [self setupNavi];
     [self setupPlayer];
     [self setupEditView];
     [self fetchVideoFrames];
@@ -66,6 +67,14 @@
 
 #pragma mark - help method
 
+- (void)setupNavi {
+    self.view.backgroundColor = [UIColor blackColor];
+    self.navigationItem.title = @"视频裁剪";
+    
+    UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(saveBarButtonItemAction)];
+    self.navigationItem.rightBarButtonItem = save;
+}
+
 - (void)setupPlayer {
     AVPlayerItem *playItem = [[AVPlayerItem alloc] initWithURL:self.videoUrl];
     self.player = [[AVPlayer alloc] initWithPlayerItem:playItem];
@@ -77,13 +86,13 @@
     self.videoTotalTime = asset.duration.value/asset.duration.timescale;
     self.timescale = asset.duration.timescale;
     
-    // 最长20s最短5秒
-    CGFloat totalWidth = kScreenWidth-kEditBlueViewWidth*2;
-    self.editMinWidth = totalWidth * 5/self.videoTotalTime;
-    if (self.videoTotalTime > 15) {
-        self.editMaxWidth = totalWidth * 15/self.videoTotalTime;
+    // 最长s 最短s
+    CGFloat totalWidth = kScreenWidth;
+    self.editMinWidth = totalWidth * KCropMinSeconds/self.videoTotalTime;
+    if (self.videoTotalTime > kCropMaxSeconds) {
+        self.editMaxWidth = totalWidth * kCropMaxSeconds/self.videoTotalTime;
     } else {
-        self.editMaxWidth = totalWidth;
+        self.editMaxWidth = totalWidth-self.leftHander.frame.size.width;
     }
     
     CMTime time = CMTimeMake(1.0, asset.duration.timescale);
@@ -93,22 +102,23 @@
         // 调整进度条
         CGFloat nowSeconds = CMTimeGetSeconds(weakSelf.player.currentTime);
         CGFloat percent = nowSeconds / weakSelf.videoTotalTime;
-        CGFloat totalWidth = kScreenWidth-kEditBlueViewWidth*2-4;
+        CGFloat totalWidth = kScreenWidth;
         
-         __block CGRect progressFrame = CGRectMake(totalWidth*percent+kEditBlueViewWidth, 4, 4, weakSelf.leftHander.frame.size.height);
+        CGRect progressFrame = CGRectMake(totalWidth*percent, 4, 4, weakSelf.leftHander.frame.size.height);
         if (weakSelf.isPlaying) {
-            weakSelf.progressLineView.frame = progressFrame;
+            [weakSelf updateProgressLineViewFrame:progressFrame];
         }
         
         // 到结束时间重新开始
-        CGFloat endSeconds = (weakSelf.rightHander.frame.origin.x-kEditBlueViewWidth)/totalWidth*weakSelf.videoTotalTime;
-        CGFloat beginSeconds = (weakSelf.leftHander.frame.size.width-kEditBlueViewWidth)/totalWidth*weakSelf.videoTotalTime;
+        CGFloat endSeconds = (weakSelf.rightHander.frame.origin.x)/totalWidth*weakSelf.videoTotalTime;
+        CGFloat beginSeconds = (weakSelf.leftHander.frame.size.width)/totalWidth*weakSelf.videoTotalTime;
         if (nowSeconds > endSeconds) {
             CMTime time = CMTimeMakeWithSeconds(beginSeconds, weakSelf.timescale);
-            progressFrame = CGRectMake(kEditBlueViewWidth, 4, 4, weakSelf.leftHander.frame.size.height);
-            weakSelf.progressLineView.frame = progressFrame;
+            percent = beginSeconds / weakSelf.videoTotalTime;
+            progressFrame = CGRectMake(totalWidth*percent, 4, 4, weakSelf.leftHander.frame.size.height);
+            [weakSelf updateProgressLineViewFrame:progressFrame];
             [weakSelf.player seekToTime:time completionHandler:^(BOOL finished) {
-                [weakSelf.player play];
+                [weakSelf play];
             }];
         }
         
@@ -159,7 +169,7 @@
     [self.rightHander addGestureRecognizer:rightPan];
     [self.editView addSubview:self.rightHander];
     
-    CGRect progressFrame = CGRectMake(leftFrame.origin.x+leftFrame.size.width, 4, 4, leftFrame.size.height);
+    CGRect progressFrame = CGRectMake(leftFrame.size.width, 4, 4, leftFrame.size.height);
     self.progressLineView = [[UIView alloc] init];
     self.progressLineView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.8];
     self.progressLineView.frame = progressFrame;
@@ -217,6 +227,16 @@
     [self.player seekToTime:time];
 }
 
+- (void)updateProgressLineViewFrame:(CGRect)frame {
+    CGFloat leftLimit = self.leftHander.frame.size.width;
+    CGFloat rightLimit = self.rightHander.frame.origin.x;
+    CGFloat rightPoint = frame.origin.x + frame.size.width;
+    CGFloat leftPoint = frame.origin.x;
+    if (leftPoint >= leftLimit && rightPoint <= rightLimit) {
+        self.progressLineView.frame = frame;
+    }
+}
+
 - (void)play {
     [self.player play];
     self.isPlaying = YES;
@@ -227,9 +247,54 @@
     self.isPlaying = NO;
 }
 
+- (void)showToast:(NSString *)message {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.mode = MBProgressHUDModeText;
+    hud.label.text = message;
+    [hud hideAnimated:YES afterDelay:1.0];
+}
+
+- (void)showFinishAlert {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"新视频已经保存到相册了" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        [alert dismissViewControllerAnimated:YES completion:nil];
+    }];
+    
+    [alert addAction:cancel];
+    [self presentViewController:alert animated:YES completion:Nil];
+}
+
 #pragma mark - event
 
-- (void) leftPanGestureHandler:(UIPanGestureRecognizer *)pan {
+- (void) saveBarButtonItemAction {
+    [self pause];
+    
+    CGFloat totalWidth = kScreenWidth-kEditBlueViewWidth*2;
+    // 到结束时间重新开始
+    CGFloat endSeconds = (self.rightHander.frame.origin.x-kEditBlueViewWidth)/totalWidth*self.videoTotalTime;
+    CGFloat beginSeconds = (self.leftHander.frame.size.width-kEditBlueViewWidth)/totalWidth*self.videoTotalTime;
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.label.text = @"process...";
+    
+    [MXVideoUtil cropVideoWithVideoPath:self.videoUrl startTime:beginSeconds endTime:endSeconds size:CGSizeZero fileName:@"cropedVideo" shouldScale:YES resultHandler:^(NSURL *outputURL, NSError *error) {
+        if (error == nil) {
+            [MXVideoUtil saveToPhotoLibrary:outputURL resultHandler:^(NSError *error) {
+                [hud hideAnimated:YES];
+                if (error == nil) {
+                    [self showFinishAlert];
+                } else {
+                    [self showToast:error.localizedDescription];
+                }
+            }];
+        } else {
+            [hud hideAnimated:YES];
+            [self showToast:error.localizedDescription];
+        }
+    }];
+}
+
+- (void)leftPanGestureHandler:(UIPanGestureRecognizer *)pan {
     switch (pan.state) {
         case UIGestureRecognizerStateChanged: {
             [self pause];

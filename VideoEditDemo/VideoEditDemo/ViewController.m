@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "VideoEditViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <MBProgressHUD/MBProgressHUD.h>
 
 @interface ViewController ()<UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *videoNameLabel;
@@ -24,6 +25,8 @@
     
     self.videoNameLabel.numberOfLines = 0;
 }
+
+
 
 
 - (IBAction)addVideoAction:(UIBarButtonItem *)sender {

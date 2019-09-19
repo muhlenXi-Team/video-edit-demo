@@ -13,11 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MXVideoUtil : NSObject
 
-- (void)fetchVideoAssetURLWith:(PHAsset *)phasset resultHandler:(void (^)(NSURL*videoURL))resultHandler;
++ (void)fetchVideoAssetURLWith:(PHAsset *)phasset resultHandler:(void (^)(NSURL*videoURL))resultHandler;
 
-- (void)cropVideoWithVideoPath:(NSURL*)videoPath startTime:(float)startTime endTime:(float)endTime size:(CGSize)videoSize fileName:(NSString*)fileName shouldScale:(BOOL)shouldScale;
++ (void)cropVideoWithVideoPath:(NSURL*)videoPath startTime:(float)startTime endTime:(float)endTime size:(CGSize)videoSize fileName:(NSString*)fileName shouldScale:(BOOL)shouldScale resultHandler:(void (^)(NSURL*outputURL, NSError*error))resultHandler;
 
-- (void)saveToPhotoLibrary:(NSURL *) videoURL;
++ (void)saveToPhotoLibrary:(NSURL *)videoURL resultHandler:(void (^)(NSError*error))resultHandler;
 
 @end
 

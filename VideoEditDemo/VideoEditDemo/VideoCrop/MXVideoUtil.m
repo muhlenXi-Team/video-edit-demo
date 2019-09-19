@@ -17,7 +17,7 @@
  @param phasset 视频 phasset
  @param resultHandler 结果URL回调
  */
-- (void)fetchVideoAssetURLWith:(PHAsset *)phasset resultHandler:(void (^)(NSURL*videoURL))resultHandler{
++ (void)fetchVideoAssetURLWith:(PHAsset *)phasset resultHandler:(void (^)(NSURL*videoURL))resultHandler{
     PHVideoRequestOptions *options = [PHVideoRequestOptions new];
     [[PHImageManager defaultManager] requestAVAssetForVideo:phasset options:options resultHandler:^(AVAsset *asset, AVAudioMix *audioMix, NSDictionary *info) {
         AVURLAsset *urlAsset = (AVURLAsset *) asset;
@@ -35,7 +35,7 @@
  @param fileName 裁剪生成文件名
  @param shouldScale 是否按比例裁剪
  */
-- (void)cropVideoWithVideoPath:(NSURL*)videoPath startTime:(float)startTime endTime:(float)endTime size:(CGSize)videoSize fileName:(NSString*)fileName shouldScale:(BOOL)shouldScale {
++ (void)cropVideoWithVideoPath:(NSURL*)videoPath startTime:(float)startTime endTime:(float)endTime size:(CGSize)videoSize fileName:(NSString*)fileName shouldScale:(BOOL)shouldScale  resultHandler:(void (^)(NSURL*outputURL, NSError*error))resultHandler {
     
     // 1、生成 videoAsset
     NSDictionary *opts = [NSDictionary dictionaryWithObject:@(YES) forKey:AVURLAssetPreferPreciseDurationAndTimingKey];
@@ -105,6 +105,13 @@
                                                         preferredTransform.d*scale,
                                                         preferredTransform.tx*scale,
                                                         preferredTransform.ty*scale);
+    
+    // 微信拍摄的视频tx错位，需要修复
+    CGRect rect = {{0, 0}, naturalSize};
+    CGRect transformedRect = CGRectApplyAffineTransform(rect, transform);
+    transform.tx -= transformedRect.origin.x;
+    transform.ty -= transformedRect.origin.y;
+    
     [layerInstruction setTransform:transform atTime:kCMTimeZero];
     
     mainInstruction.layerInstructions = @[layerInstruction];
@@ -136,9 +143,10 @@
     [exporter exportAsynchronouslyWithCompletionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             if (exporter.status == AVAssetExportSessionStatusCompleted) {
-                NSLog(@"视频裁剪完成");
-                NSLog(@"%@",exporter.outputURL.absoluteString);
-                [self saveToPhotoLibrary:exporter.outputURL];
+                resultHandler(exporter.outputURL, nil);
+            } else {
+                NSError *error = [self createNSErrorWithCode:200 errorReason:@"视频导出失败"];
+                resultHandler(nil, error);
             }
         });
     }];
@@ -150,21 +158,26 @@
  
  @param videoURL 视频地址
  */
-- (void)saveToPhotoLibrary:(NSURL *) videoURL {
++ (void)saveToPhotoLibrary:(NSURL *)videoURL resultHandler:(void (^)(NSError*error))resultHandler{
     if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoURL.path)) {
         NSError *error;
         [[PHPhotoLibrary sharedPhotoLibrary] performChangesAndWait:^{
             [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:videoURL];
         } error:&error];
         if (error) {
-            NSLog(@"%@", error.localizedDescription);
-        }
-        else {
-            NSLog(@"视频已经保存到相册");
+            resultHandler(error);
+        } else {
+            resultHandler(nil);
         }
     } else {
-        NSLog(@"视频保存相册失败，请设置软件读取相册权限");
+        resultHandler([self createNSErrorWithCode:100 errorReason:@"视频保存相册失败，请设置软件读取相册权限"]);
     }
+}
+
++ (NSError *)createNSErrorWithCode:(NSInteger)code errorReason:(NSString *)reason {
+    NSDictionary *info = @{NSLocalizedDescriptionKey : reason };
+    NSError *error = [NSError errorWithDomain:@"com.muhlenxi.demo" code:code userInfo:info];
+    return error;
 }
 
 
