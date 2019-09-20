@@ -16,8 +16,10 @@
 		C81E9DA9233105F10037B4CC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C81E9DA8233105F10037B4CC /* main.m */; };
 		C81E9DB1233106360037B4CC /* MXVideoUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C81E9DB0233106360037B4CC /* MXVideoUtil.m */; };
 		C81E9DB4233110F10037B4CC /* VideoEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C81E9DB3233110F10037B4CC /* VideoEditViewController.m */; };
+		C831D2052335B05A0050E74B /* VideoSpliceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C831D2042335B05A0050E74B /* VideoSpliceViewController.m */; };
 		C8476F212331CADA00ABC463 /* FrameEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C8476F202331CADA00ABC463 /* FrameEditCell.m */; };
 		C8476F252331FDCC00ABC463 /* FrameHanderView.m in Sources */ = {isa = PBXBuildFile; fileRef = C8476F242331FDCC00ABC463 /* FrameHanderView.m */; };
+		C891998A23350A1100091021 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C891998923350A1100091021 /* RootViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,10 +39,14 @@
 		C81E9DB0233106360037B4CC /* MXVideoUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MXVideoUtil.m; sourceTree = "<group>"; };
 		C81E9DB2233110F10037B4CC /* VideoEditViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoEditViewController.h; sourceTree = "<group>"; };
 		C81E9DB3233110F10037B4CC /* VideoEditViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoEditViewController.m; sourceTree = "<group>"; };
+		C831D2032335B05A0050E74B /* VideoSpliceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoSpliceViewController.h; sourceTree = "<group>"; };
+		C831D2042335B05A0050E74B /* VideoSpliceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoSpliceViewController.m; sourceTree = "<group>"; };
 		C8476F1F2331CADA00ABC463 /* FrameEditCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameEditCell.h; sourceTree = "<group>"; };
 		C8476F202331CADA00ABC463 /* FrameEditCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameEditCell.m; sourceTree = "<group>"; };
 		C8476F232331FDCC00ABC463 /* FrameHanderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameHanderView.h; sourceTree = "<group>"; };
 		C8476F242331FDCC00ABC463 /* FrameHanderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameHanderView.m; sourceTree = "<group>"; };
+		C891998823350A1100091021 /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		C891998923350A1100091021 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		E82F348AADEFA8894321EEF0 /* Pods-VideoEditDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoEditDemo.debug.xcconfig"; path = "Target Support Files/Pods-VideoEditDemo/Pods-VideoEditDemo.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,7 +76,6 @@
 				E82F348AADEFA8894321EEF0 /* Pods-VideoEditDemo.debug.xcconfig */,
 				65885982916552730C93E121 /* Pods-VideoEditDemo.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -95,11 +100,13 @@
 		C81E9D98233105F00037B4CC /* VideoEditDemo */ = {
 			isa = PBXGroup;
 			children = (
+				C831D2062335B0760050E74B /* VideoSplice */,
 				C8476F222331FD7000ABC463 /* VideoCrop */,
 				C81E9D99233105F00037B4CC /* AppDelegate.h */,
 				C81E9D9A233105F00037B4CC /* AppDelegate.m */,
 				C81E9D9C233105F00037B4CC /* ViewController.h */,
-				C81E9D9D233105F00037B4CC /* ViewController.m */,
+				C891998823350A1100091021 /* RootViewController.h */,
+				C891998923350A1100091021 /* RootViewController.m */,
 				C81E9D9F233105F00037B4CC /* Main.storyboard */,
 				C81E9DA2233105F10037B4CC /* Assets.xcassets */,
 				C81E9DA4233105F10037B4CC /* LaunchScreen.storyboard */,
@@ -109,9 +116,19 @@
 			path = VideoEditDemo;
 			sourceTree = "<group>";
 		};
+		C831D2062335B0760050E74B /* VideoSplice */ = {
+			isa = PBXGroup;
+			children = (
+				C831D2032335B05A0050E74B /* VideoSpliceViewController.h */,
+				C831D2042335B05A0050E74B /* VideoSpliceViewController.m */,
+			);
+			path = VideoSplice;
+			sourceTree = "<group>";
+		};
 		C8476F222331FD7000ABC463 /* VideoCrop */ = {
 			isa = PBXGroup;
 			children = (
+				C81E9D9D233105F00037B4CC /* ViewController.m */,
 				C81E9DB2233110F10037B4CC /* VideoEditViewController.h */,
 				C81E9DB3233110F10037B4CC /* VideoEditViewController.m */,
 				C8476F1F2331CADA00ABC463 /* FrameEditCell.h */,
@@ -221,7 +238,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				C81E9D9E233105F00037B4CC /* ViewController.m in Sources */,
+				C831D2052335B05A0050E74B /* VideoSpliceViewController.m in Sources */,
 				C81E9DB4233110F10037B4CC /* VideoEditViewController.m in Sources */,
+				C891998A23350A1100091021 /* RootViewController.m in Sources */,
 				C81E9DA9233105F10037B4CC /* main.m in Sources */,
 				C8476F212331CADA00ABC463 /* FrameEditCell.m in Sources */,
 				C81E9DB1233106360037B4CC /* MXVideoUtil.m in Sources */,

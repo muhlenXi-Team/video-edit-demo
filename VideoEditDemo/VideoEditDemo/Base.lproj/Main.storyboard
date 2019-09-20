@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--视频编辑-->
+        <!--裁剪-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="video url" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yzC-PC-c6d">
-                                <rect key="frame" x="16" y="437.5" width="382" height="21"/>
+                                <rect key="frame" x="174" y="437.5" width="66" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -29,22 +29,24 @@
                         <constraints>
                             <constraint firstItem="yzC-PC-c6d" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="1hL-Ab-pBV"/>
                             <constraint firstItem="yzC-PC-c6d" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="HIc-bD-Y8c"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="yzC-PC-c6d" secondAttribute="trailing" constant="16" id="KMc-Is-cya"/>
-                            <constraint firstItem="yzC-PC-c6d" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="LZb-bG-vbC"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="yzC-PC-c6d" secondAttribute="trailing" id="KMc-Is-cya"/>
+                            <constraint firstItem="yzC-PC-c6d" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="LZb-bG-vbC"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="视频编辑" id="em0-uQ-yk5">
-                        <barButtonItem key="leftBarButtonItem" style="plain" systemItem="add" id="nkb-Rx-LgL">
-                            <connections>
-                                <action selector="addVideoAction:" destination="BYZ-38-t0r" id="TNY-NR-YBt"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" style="plain" systemItem="edit" id="YD7-7q-LW4">
-                            <connections>
-                                <action selector="editVideoAction:" destination="BYZ-38-t0r" id="rJw-qk-Txx"/>
-                            </connections>
-                        </barButtonItem>
+                    <navigationItem key="navigationItem" title="裁剪" id="em0-uQ-yk5">
+                        <rightBarButtonItems>
+                            <barButtonItem style="done" systemItem="edit" id="YD7-7q-LW4">
+                                <connections>
+                                    <action selector="editVideoAction:" destination="BYZ-38-t0r" id="rJw-qk-Txx"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem style="done" systemItem="add" id="nkb-Rx-LgL">
+                                <connections>
+                                    <action selector="addVideoAction:" destination="BYZ-38-t0r" id="TNY-NR-YBt"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="videoNameLabel" destination="yzC-PC-c6d" id="Asl-Ap-99x"/>
@@ -52,7 +54,75 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="977" y="-535"/>
+            <point key="canvasLocation" x="1687" y="-535"/>
+        </scene>
+        <!--拼接-->
+        <scene sceneID="ZmC-Pj-FPx">
+            <objects>
+                <viewController id="cPS-cd-zri" customClass="VideoSpliceViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="KgX-tM-U6T">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="anj-kN-GZi">
+                                <rect key="frame" x="352" y="103.5" width="42" height="30"/>
+                                <state key="normal" title="Add A"/>
+                                <connections>
+                                    <action selector="addVideoAAction:" destination="cPS-cd-zri" eventType="touchUpInside" id="2wg-ld-dla"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video url A" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hce-HI-l4v">
+                                <rect key="frame" x="20" y="108" width="294" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video url B" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cvk-Wj-Zux">
+                                <rect key="frame" x="20" y="148.5" width="294" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TOw-sZ-XFa">
+                                <rect key="frame" x="352" y="144" width="42" height="30"/>
+                                <state key="normal" title="Add B"/>
+                                <connections>
+                                    <action selector="addVideoBAction:" destination="cPS-cd-zri" eventType="touchUpInside" id="NvD-fg-rwl"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="TOw-sZ-XFa" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cvk-Wj-Zux" secondAttribute="trailing" constant="8" symbolic="YES" id="0pq-IY-bYo"/>
+                            <constraint firstItem="cvk-Wj-Zux" firstAttribute="top" secondItem="Hce-HI-l4v" secondAttribute="bottom" constant="20" id="3Vx-sY-Efe"/>
+                            <constraint firstItem="anj-kN-GZi" firstAttribute="centerY" secondItem="Hce-HI-l4v" secondAttribute="centerY" id="5y0-Na-q5z"/>
+                            <constraint firstItem="anj-kN-GZi" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Hce-HI-l4v" secondAttribute="trailing" constant="8" symbolic="YES" id="6ZT-zx-CoD"/>
+                            <constraint firstItem="SLt-Lz-TKv" firstAttribute="trailing" secondItem="cvk-Wj-Zux" secondAttribute="trailing" constant="100" id="Egm-dC-Sqa"/>
+                            <constraint firstItem="TOw-sZ-XFa" firstAttribute="firstBaseline" secondItem="cvk-Wj-Zux" secondAttribute="firstBaseline" id="Gxe-ah-sql"/>
+                            <constraint firstItem="Hce-HI-l4v" firstAttribute="top" secondItem="SLt-Lz-TKv" secondAttribute="top" constant="20" id="HAf-OP-ttT"/>
+                            <constraint firstItem="cvk-Wj-Zux" firstAttribute="leading" secondItem="SLt-Lz-TKv" secondAttribute="leading" constant="20" id="MR9-m1-Tcq"/>
+                            <constraint firstItem="SLt-Lz-TKv" firstAttribute="trailing" secondItem="anj-kN-GZi" secondAttribute="trailing" constant="20" id="NDE-QV-CPf"/>
+                            <constraint firstItem="SLt-Lz-TKv" firstAttribute="trailing" secondItem="Hce-HI-l4v" secondAttribute="trailing" constant="100" id="l8D-cx-h9P"/>
+                            <constraint firstItem="Hce-HI-l4v" firstAttribute="leading" secondItem="SLt-Lz-TKv" secondAttribute="leading" constant="20" id="lnH-rt-3zp"/>
+                            <constraint firstItem="SLt-Lz-TKv" firstAttribute="trailing" secondItem="TOw-sZ-XFa" secondAttribute="trailing" constant="20" id="qM6-6G-fAF"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="SLt-Lz-TKv"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="拼接" id="P7F-89-mwP">
+                        <barButtonItem key="rightBarButtonItem" title="splice" id="iRm-ey-tlO">
+                            <connections>
+                                <action selector="apliceVideoAAction:" destination="cPS-cd-zri" id="L8F-ii-6Uk"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="urlLabelA" destination="Hce-HI-l4v" id="lNd-mN-Oha"/>
+                        <outlet property="urlLabelB" destination="cvk-Wj-Zux" id="Dkg-DW-7Db"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RNo-UC-HC9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="940.57971014492762" y="187.5"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ZVB-s1-RSc">
@@ -65,12 +135,60 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="fXi-c4-gdN"/>
+                        <segue destination="v0y-54-zNl" kind="relationship" relationship="rootViewController" id="98c-5Q-zzt"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="39P-1g-fke" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="131.8840579710145" y="-535.04464285714278"/>
+        </scene>
+        <!--视频编辑-->
+        <scene sceneID="GHC-x9-Pzc">
+            <objects>
+                <viewController id="v0y-54-zNl" customClass="RootViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zE5-E5-z07">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xpa-Hp-Ega">
+                                <rect key="frame" x="176" y="128" width="62" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Jui-6D-6Zk"/>
+                                </constraints>
+                                <state key="normal" title="视频裁剪">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                                <connections>
+                                    <segue destination="BYZ-38-t0r" kind="show" id="mXI-xi-Fvv"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EYW-Lk-U7h">
+                                <rect key="frame" x="176" y="184" width="62" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="3Pa-Ml-MfG"/>
+                                </constraints>
+                                <state key="normal" title="视频拼接">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <segue destination="cPS-cd-zri" kind="show" id="ZZa-cC-R4q"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="EYW-Lk-U7h" firstAttribute="centerX" secondItem="zE5-E5-z07" secondAttribute="centerX" id="1Xf-eh-yuf"/>
+                            <constraint firstItem="Xpa-Hp-Ega" firstAttribute="top" secondItem="cQO-Rr-HPS" secondAttribute="top" constant="40" id="FF1-fU-dvW"/>
+                            <constraint firstItem="Xpa-Hp-Ega" firstAttribute="centerX" secondItem="zE5-E5-z07" secondAttribute="centerX" id="uIh-Wl-Wlh"/>
+                            <constraint firstItem="EYW-Lk-U7h" firstAttribute="top" secondItem="Xpa-Hp-Ega" secondAttribute="bottom" constant="16" id="vqr-yS-KnR"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="cQO-Rr-HPS"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="视频编辑" id="vJg-AV-Bcs"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vC2-7S-sjQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="942" y="-535"/>
         </scene>
     </scenes>
 </document>

@@ -161,7 +161,7 @@
     [self.leftHander addGestureRecognizer:leftPan];
     [self.editView addSubview:self.leftHander];
     
-    CGFloat rightX = self.leftHander.frame.size.width+self.editMaxWidth;
+    CGFloat rightX = self.leftHander.frame.size.width+self.editMinWidth;
     CGRect rightFrame = CGRectMake(rightX, 4, self.editView.bounds.size.width-rightX, frame.size.height);
     self.rightHander = [[FrameHanderView alloc] initWithFrame:rightFrame handerLeft:NO];
     self.rightHander.userInteractionEnabled = YES;

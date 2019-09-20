@@ -11,12 +11,7 @@
 
 @implementation MXVideoUtil
 
-/**
- 根据 phasset 获取 video 的URL
- 
- @param phasset 视频 phasset
- @param resultHandler 结果URL回调
- */
+
 + (void)fetchVideoAssetURLWith:(PHAsset *)phasset resultHandler:(void (^)(NSURL*videoURL))resultHandler{
     PHVideoRequestOptions *options = [PHVideoRequestOptions new];
     [[PHImageManager defaultManager] requestAVAssetForVideo:phasset options:options resultHandler:^(AVAsset *asset, AVAudioMix *audioMix, NSDictionary *info) {
@@ -25,16 +20,7 @@
     }];
 }
 
-/**
- 视频裁剪函数
- 
- @param videoPath 视频地址
- @param startTime 裁剪开始时间（秒）
- @param endTime 裁剪结束时间（秒）
- @param videoSize 裁剪视频大小
- @param fileName 裁剪生成文件名
- @param shouldScale 是否按比例裁剪
- */
+
 + (void)cropVideoWithVideoPath:(NSURL*)videoPath startTime:(float)startTime endTime:(float)endTime size:(CGSize)videoSize fileName:(NSString*)fileName shouldScale:(BOOL)shouldScale  resultHandler:(void (^)(NSURL*outputURL, NSError*error))resultHandler {
     
     // 1、生成 videoAsset
@@ -153,11 +139,178 @@
 }
 
 
-/**
- 保存视频到相册
- 
- @param videoURL 视频地址
- */
+
++ (void)cropVideoWithVideoPath:(NSURL*)videoPath startTime:(float)startTime durationTime:(float)durationTime fileName:(NSString*)fileName resultHandler:(void (^)(NSURL*outputURL, NSError*error))resultHandler  {
+    
+    NSDictionary *opts = [NSDictionary dictionaryWithObject:@(YES) forKey:AVURLAssetPreferPreciseDurationAndTimingKey];
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:videoPath options:opts];
+    float videoTotalime = asset.duration.value/asset.duration.timescale;
+    
+    if (startTime > videoTotalime) {
+        NSError *error = [self createNSErrorWithCode:300 errorReason:@"裁剪开始时间超出视频总时间长度"];
+        resultHandler(nil, error);
+        return;
+    }
+    
+    AVAssetExportSession *export = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetHighestQuality];
+    
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *myPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mp4", fileName]];
+    // 有则删除文件
+    unlink([myPath UTF8String]);
+    
+    // 如果裁剪时长超出视频裁剪范围，则取视频剩余可裁剪时长
+    float maxDuration = videoTotalime - startTime;
+    float acturalDuration = MIN(maxDuration, durationTime);
+    if(durationTime == 0) {
+        acturalDuration = maxDuration;
+    }
+    
+    CMTime start = CMTimeMakeWithSeconds(startTime, 600);
+    CMTime duration = CMTimeMakeWithSeconds(acturalDuration, 600);
+
+    CMTimeRange range = CMTimeRangeMake(start, duration);
+    export.timeRange = range;
+    export.outputURL = [NSURL fileURLWithPath:myPath];
+    export.outputFileType = AVFileTypeMPEG4;
+    
+    
+    [export exportAsynchronouslyWithCompletionHandler:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (export.status == AVAssetExportSessionStatusCompleted) {
+                resultHandler(export.outputURL, nil);
+            } else {
+                NSError *error = [self createNSErrorWithCode:200 errorReason:@"视频导出失败"];
+                resultHandler(nil, error);
+            }
+        });
+    }];
+}
+
++ (void)spliceVideoWithFirstVideoPath:(NSURL*)firstVideoPath secondVideoPath:(NSURL*)secondVideoPath fileName:(NSString*)fileName resultHandler:(void (^)(NSURL*outputURL, NSError*error))resultHandler {
+    
+    // 创建可变集合对象 Composition
+    AVMutableComposition *mutableComposition = [AVMutableComposition composition];
+    // 创建视频轨对象
+    AVMutableCompositionTrack *videoCompositionTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    // 创建音频轨对象
+    AVMutableCompositionTrack *audioCompositionTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+    
+    // 构建 视频1 视频2 的 asset
+    NSDictionary *opts = [NSDictionary dictionaryWithObject:@(YES) forKey:AVURLAssetPreferPreciseDurationAndTimingKey];
+    AVURLAsset *firstVideoAsset = [[AVURLAsset alloc] initWithURL:firstVideoPath options:opts];
+    AVURLAsset *secondVideoAsset = [[AVURLAsset alloc] initWithURL:secondVideoPath options:opts];
+    
+    // 提取 视频1 视频2 的视频轨数据
+    AVAssetTrack *firstVideoAssetTrack = [[firstVideoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    AVAssetTrack *secondVideoAssetTrack = [[secondVideoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    
+    // 添加 视频1 视频2 的视频轨数据到 视频轨对象中
+    [videoCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, firstVideoAssetTrack.timeRange.duration) ofTrack:firstVideoAssetTrack atTime:kCMTimeZero error:nil];
+    [videoCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, secondVideoAssetTrack.timeRange.duration) ofTrack:secondVideoAssetTrack atTime:firstVideoAssetTrack.timeRange.duration error:nil];
+    
+    // 提取 视频1 视频2 的音频轨数据
+    AVAssetTrack *firstVideoAudioTrack = [[firstVideoAsset tracksWithMediaType:AVMediaTypeAudio] firstObject];
+    AVAssetTrack *secondVideoAudioTrack = [[secondVideoAsset tracksWithMediaType:AVMediaTypeAudio] firstObject];
+    
+    // 添加 视频1 视频2 的音频轨数据到 音频轨对象中
+    [audioCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, firstVideoAudioTrack.timeRange.duration) ofTrack:firstVideoAudioTrack atTime:kCMTimeZero error:nil];
+    [audioCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, secondVideoAudioTrack.timeRange.duration) ofTrack:secondVideoAudioTrack atTime:firstVideoAssetTrack.timeRange.duration error:nil];
+    
+    // 检查两个 video 的方向，方向不同的 video 不能拼接
+    BOOL isFirstVideoPortrait = NO;
+    CGAffineTransform firstTransform = firstVideoAssetTrack.preferredTransform;
+    if (firstTransform.a == 0 && firstTransform.d == 0 && (firstTransform.b == 1.0 || firstTransform.b == -1.0) && (firstTransform.c == 1.0 || firstTransform.c == -1.0)) {
+        isFirstVideoPortrait = YES;
+    }
+    
+    BOOL isSecondVideoPortrait = NO;
+    CGAffineTransform secondTransform = secondVideoAssetTrack.preferredTransform;
+    if (secondTransform.a == 0 && secondTransform.d == 0 && (secondTransform.b == 1.0 || secondTransform.b == -1.0) && (secondTransform.c == 1.0 || secondTransform.c == -1.0)) {
+        isSecondVideoPortrait = YES;
+    }
+    
+    if ((isFirstVideoPortrait && !isSecondVideoPortrait) || (!isFirstVideoPortrait && isSecondVideoPortrait)) {
+        NSError *error = [self createNSErrorWithCode:400 errorReason:@"视频方向不一致，无法拼接"];
+        resultHandler(nil, error);
+        return;
+    }
+    
+    // 构建修正视频尺寸d
+    CGSize naturalSizeFirst = firstVideoAssetTrack.naturalSize;
+    CGSize naturalSizeSecond = secondVideoAssetTrack.naturalSize;
+    CGSize fixedSizeFirst = firstVideoAssetTrack.naturalSize;
+    CGSize fixedSizeSecond = secondVideoAssetTrack.naturalSize;
+    
+    if (isFirstVideoPortrait) {
+        fixedSizeFirst = CGSizeMake(firstVideoAssetTrack.naturalSize.height, firstVideoAssetTrack.naturalSize.width);
+        fixedSizeSecond = CGSizeMake(secondVideoAssetTrack.naturalSize.height, secondVideoAssetTrack.naturalSize.width);
+    }
+    
+    // 构建视频1 的操作命令
+    AVMutableVideoCompositionInstruction *firstVideoCompositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    firstVideoCompositionInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, firstVideoAssetTrack.timeRange.duration);
+    AVMutableVideoCompositionLayerInstruction *firstVideoLayerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
+    
+    // 微信拍摄的视频tx错位，需要修复
+    CGRect firstRect = {{0, 0}, naturalSizeFirst};
+    CGRect firstTransformedRect = CGRectApplyAffineTransform(firstRect, firstTransform);
+    firstTransform.tx -= firstTransformedRect.origin.x;
+    firstTransform.ty -= firstTransformedRect.origin.y;
+    [firstVideoLayerInstruction setTransform:firstTransform atTime:kCMTimeZero];
+    
+    firstVideoCompositionInstruction.layerInstructions = @[firstVideoLayerInstruction];
+    
+    
+    // 构建视频2 的操作命令
+    AVMutableVideoCompositionInstruction * secondVideoCompositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    secondVideoCompositionInstruction.timeRange = CMTimeRangeMake(firstVideoAssetTrack.timeRange.duration, CMTimeAdd(firstVideoAssetTrack.timeRange.duration, secondVideoAssetTrack.timeRange.duration));
+    AVMutableVideoCompositionLayerInstruction *secondVideoLayerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
+    
+    // 微信拍摄的视频tx错位，需要修复
+    CGRect secondRect = {{0, 0}, naturalSizeSecond};
+    CGRect secondTransformedRect = CGRectApplyAffineTransform(secondRect, secondTransform);
+    secondTransform.tx -= secondTransformedRect.origin.x;
+    secondTransform.ty -= secondTransformedRect.origin.y;
+    
+    [secondVideoLayerInstruction setTransform:secondTransform atTime:firstVideoAssetTrack.timeRange.duration];
+    secondVideoCompositionInstruction.layerInstructions = @[secondVideoLayerInstruction];
+    
+    AVMutableVideoComposition *mutableVideoComposition = [AVMutableVideoComposition videoComposition];
+    mutableVideoComposition.instructions = @[firstVideoCompositionInstruction, secondVideoCompositionInstruction];
+    
+    
+    float renderWidth = MAX(fixedSizeFirst.width, fixedSizeSecond.width);
+    float renderHeight = MAX(fixedSizeFirst.height, fixedSizeSecond.height);
+    
+    mutableVideoComposition.renderSize = CGSizeMake(renderWidth, renderHeight);
+    mutableVideoComposition.frameDuration = CMTimeMake(1,30);
+    
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *myPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mp4", fileName]];
+    // 有则删除文件
+    unlink([myPath UTF8String]);
+    NSURL *videoURL = [NSURL fileURLWithPath:myPath];
+    
+    // 导出视频
+    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mutableComposition presetName:AVAssetExportPresetHighestQuality];
+    exporter.outputURL = videoURL;
+    exporter.outputFileType = AVFileTypeMPEG4;
+    exporter.shouldOptimizeForNetworkUse = YES;
+    exporter.videoComposition = mutableVideoComposition;
+    
+    [exporter exportAsynchronouslyWithCompletionHandler:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (exporter.status == AVAssetExportSessionStatusCompleted) {
+                resultHandler(exporter.outputURL, nil);
+            } else {
+                NSError *error = [self createNSErrorWithCode:200 errorReason:@"视频导出失败"];
+                resultHandler(nil, error);
+            }
+        });
+    }];
+}
+
 + (void)saveToPhotoLibrary:(NSURL *)videoURL resultHandler:(void (^)(NSError*error))resultHandler{
     if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoURL.path)) {
         NSError *error;

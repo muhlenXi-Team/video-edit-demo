@@ -10,6 +10,8 @@
 #import "VideoEditViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <MBProgressHUD/MBProgressHUD.h>
+#import <AVFoundation/AVFoundation.h>
+#import "MXVideoUtil.h"
 
 @interface ViewController ()<UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *videoNameLabel;
@@ -24,8 +26,9 @@
     [super viewDidLoad];
     
     self.videoNameLabel.numberOfLines = 0;
+    
+    
 }
-
 
 
 
