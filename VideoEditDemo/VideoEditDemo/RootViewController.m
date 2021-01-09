@@ -7,8 +7,11 @@
 //
 
 #import "RootViewController.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface RootViewController ()
+
+@property (nonatomic,assign) BOOL lightOn;
 
 @end
 
@@ -19,14 +22,22 @@
     // Do any additional setup after loading the view.
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+
+- (IBAction)testButtonAction:(id)sender {
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    BOOL hasTorch =  [device hasTorch];
+    
+    if (hasTorch) {
+        self.lightOn = !self.lightOn;
+        AVCaptureTorchMode mode = self.lightOn ? AVCaptureTorchModeOn : AVCaptureTorchModeOff;
+        
+        [device lockForConfiguration:nil];
+        [device setTorchMode:mode];
+        [device unlockForConfiguration];
+    } else {
+        NSLog(@"没有闪光灯");
+    }
 }
-*/
 
 @end

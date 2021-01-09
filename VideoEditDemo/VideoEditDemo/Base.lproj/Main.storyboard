@@ -174,13 +174,22 @@
                                     <segue destination="cPS-cd-zri" kind="show" id="ZZa-cC-R4q"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bD5-xL-WIl">
+                                <rect key="frame" x="192" y="812" width="30" height="30"/>
+                                <state key="normal" title="test"/>
+                                <connections>
+                                    <action selector="testButtonAction:" destination="v0y-54-zNl" eventType="touchUpInside" id="eVK-pm-6bE"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="EYW-Lk-U7h" firstAttribute="centerX" secondItem="zE5-E5-z07" secondAttribute="centerX" id="1Xf-eh-yuf"/>
+                            <constraint firstItem="bD5-xL-WIl" firstAttribute="centerX" secondItem="zE5-E5-z07" secondAttribute="centerX" id="6DE-ud-jca"/>
                             <constraint firstItem="Xpa-Hp-Ega" firstAttribute="top" secondItem="cQO-Rr-HPS" secondAttribute="top" constant="40" id="FF1-fU-dvW"/>
                             <constraint firstItem="Xpa-Hp-Ega" firstAttribute="centerX" secondItem="zE5-E5-z07" secondAttribute="centerX" id="uIh-Wl-Wlh"/>
                             <constraint firstItem="EYW-Lk-U7h" firstAttribute="top" secondItem="Xpa-Hp-Ega" secondAttribute="bottom" constant="16" id="vqr-yS-KnR"/>
+                            <constraint firstItem="cQO-Rr-HPS" firstAttribute="bottom" secondItem="bD5-xL-WIl" secondAttribute="bottom" constant="20" id="xHG-eY-dVh"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="cQO-Rr-HPS"/>
                     </view>
